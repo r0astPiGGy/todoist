@@ -1,0 +1,81 @@
+.todo {
+  width: 100%;
+  border-radius: 0.75rem;
+  box-shadow: 0rem 0rem 0rem 0.0625rem #49454f;
+  display: grid;
+  grid-template-columns: 1fr 25%;
+}
+
+.todo .content {
+  display: grid;
+  column-gap: 0.5rem;
+  padding: 0.75rem;
+  width: 100%;
+  grid-template-columns: 1.125rem 1fr;
+}
+
+.todo .description,
+.name {
+  word-break: normal;
+}
+
+.todo .name {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.todo .description {
+  color: #b3b3b3;
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.todo .delete {
+  display: none;
+  border-top-right-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+  border: none;
+  color: #ffffff;
+  background-color: #b3261e;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: 80ms;
+}
+
+.todo .delete:hover {
+  background-color: #a1231d;
+}
+
+.todo .delete:active {
+  opacity: 0.9;
+}
+
+.todo .date {
+  padding: 0.75rem;
+  display: block;
+  font-weight: 500;
+  color: #7b7b7b;
+  font-size: 0.75rem;
+  text-align: end;
+}
+
+.todo:hover .date {
+  display: none;
+}
+
+.todo:hover .delete {
+  display: block;
+}
+
+.todo input[type="checkbox"] {
+  min-width: 1.125rem;
+  min-height: 1.125rem;
+  padding: 1rem;
+  background: #49454f00;
+  color-scheme: dark;
+}
+
+.todo.done {
+  opacity: 0.6;
+}

@@ -1,0 +1,50 @@
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  font-weight: 500;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  height: 2rem;
+  border-radius: .5rem;
+
+  color: #e2e2e2;
+  box-shadow: 0rem 0rem 0rem .0625rem #444444;
+  background-color: #1d1b20;
+  transition: 60ms;
+  cursor: pointer;
+}
+
+.option.selected {
+  color: #f9f6ff;
+  box-shadow: 0rem 0rem 0rem .0625rem #343434;
+  background-color: #343434;
+}
+
+.option:hover {
+  opacity: 0.7;
+}
+
+.option:not(.selected):active {
+  opacity: 0.5;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  font-size: .875rem;
+}
+
+.filter-options p {
+  font-weight: 500;
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: .5rem;
+}
+
+.filter-options > div {
+  display: flex;
+  gap: .5rem;
+}

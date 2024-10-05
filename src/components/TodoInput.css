@@ -1,0 +1,59 @@
+.grid {
+  display: grid;
+  grid-template-columns: auto 25%;
+  gap: 0.5rem;
+}
+
+.grid textarea,
+input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  color: rgb(232, 232, 232);
+  border: none;
+  border-radius: 0.25rem;
+  box-shadow: 0rem 0rem 0rem .0625rem #444444;
+  background-color: rgba(34, 34, 34, 0);
+}
+
+.grid button {
+  height: 2.5rem;
+  background-color: #cfcfcf;
+  border: none;
+  border-radius: 100rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  font-size: .875rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  transition: 60ms;
+  cursor: pointer;
+}
+
+.grid button:hover {
+  opacity: 0.8;
+}
+
+
+.grid button:active {
+  opacity: 0.7;
+}
+.grid input:focus,
+.grid textarea:focus {
+  box-shadow: 0rem 0rem 0rem .0625rem #707070;
+}
+
+.grid ::placeholder {
+  color: rgb(150, 150, 150);
+}
+
+.error {
+  color: red;
+  margin-bottom: 0.25rem;
+}
+
+textarea {
+  resize: none;
+  height: 6.5rem;
+}
