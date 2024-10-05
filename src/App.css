@@ -1,6 +1,38 @@
 #root {
   padding-top: 5rem;
+  padding-bottom: 5rem;
   max-width: 50rem;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
   font-size: 1rem;
+  height: 100vh;
+  max-height: 100vh;
+}
+
+#root > .grid {
+  height: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: auto 75%;
+  grid-template-rows: auto 1fr;
+  gap: 0.5rem;
+}
+
+/* Todo: common.css */
+#content {
+  flex: 1;
+}
+
+.fill-row {
+  grid-column-start: span 2;
+}
+
+.scrollable {
+  overflow-y: scroll;
+  padding: .0625rem;
+  min-height: 0;
+  /* max-height: 36rem; */
 }

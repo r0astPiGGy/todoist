@@ -1,34 +1,41 @@
-import React from "react";
-import "./TodoInput.css";
+import React from "react"
+import "./TodoInput.css"
 
 export default class TodoInput extends React.Component {
+
+  handleAdd = () => this.props.onAdd(this.props.name, this.props.description)
+
+  handleNameChange = (e) => this.props.onNameChange(e.target.value)
+
+  handleDescriptionChange = (e) => this.props.onDescriptionChange(e.target.value)
+
   render() {
     const {
       name,
       description,
-      onNameChange,
-      onDescriptionChange,
-      onAdd,
       error,
-    } = this.props;
+    } = this.props
 
     return (
       <>
-        <p className="error">{error || <br/>}</p>
-        <div className="grid">
+        <p className="error">{error || <br />}</p>
+
+        <div className="todo-input grid">
+          <p>Task name</p>
           <input
-            onChange={(e) => onNameChange(e.target.value)}
+            onChange={this.handleNameChange}
             value={name}
             placeholder="Task name"
           />
-          <button onClick={() => onAdd(name, description)}>Add</button>
+          <p>Task description</p>
           <textarea
-            onChange={(e) => onDescriptionChange(e.target.value)}
+            onChange={this.handleDescriptionChange}
             value={description}
             placeholder="Task description"
           />
         </div>
+        <button onClick={this.handleAdd}>Add</button>
       </>
-    );
+    )
   }
 }

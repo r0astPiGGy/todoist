@@ -16,7 +16,7 @@
 
 .todo .description,
 .name {
-  word-break: normal;
+  word-break:break-all;
 }
 
 .todo .name {
