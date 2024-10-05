@@ -13,6 +13,7 @@ export default class TodoList extends React.PureComponent {
           <Todo
             key={todo.id}
             name={todo.name}
+            severity={todo.severity.name}
             description={todo.description}
             date={todo.date}
             done={todo.done}

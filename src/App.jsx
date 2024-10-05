@@ -6,14 +6,24 @@ import TodoList from "./components/TodoList.jsx"
 import ChipGroup from "./components/ui/ChipGroup.jsx"
 import TextField from "./components/ui/TextField.jsx"
 import Button from "./components/ui/Button.jsx"
+import Spacer from "./components/ui/Spacer.jsx"
 import { Guid } from "js-guid"
 
 export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      name: "",
-      description: "",
+      severities: [
+        { id: "urgent", name: "Urgent" },
+        { id: "mid", name: "Mid" },
+        { id: "notUrgent", name: "Not urgent" },
+      ],
+      input: {
+        name: "",
+        description: "",
+        error: null,
+        severityId: "mid",
+      },
       todos: [
         {
           id: Guid.newGuid(),
@@ -22,42 +32,60 @@ export default class App extends React.Component {
             "While walking with the dog, I should definitely buy coffee and enjoy the beautiful weather",
           date: new Date(),
           done: false,
+          severity: { id: "mid", name: "Mid" },
         },
       ],
-      error: null,
       filterOption: "all",
-      filterOptions: {
-        all: { name: "All", filter: () => true },
-        notDone: { name: "Active", filter: (todo) => !todo.done },
-        done: { name: "Done", filter: (todo) => todo.done },
-      },
+      filterOptions: [
+        { id: "all", name: "All", filter: () => true },
+        { id: "notDone", name: "Active", filter: (todo) => !todo.done },
+        { id: "done", name: "Done", filter: (todo) => todo.done },
+      ],
     }
   }
 
-  handleAdd = (name, description) => {
+  setInputState = (state) => {
+    const obj = {
+      ...this.state.input,
+    }
+
+    Object.entries(state).forEach(([k, v]) => (obj[k] = v))
+
+    this.setState({ input: obj })
+  }
+
+  handleAdd = (name, description, severityId) => {
     if (!name) {
-      this.setState({ error: "Task name cannot be empty" })
+      this.setInputState({ error: "Task name cannot be empty" })
       return
     }
     if (name.startsWith(" ")) {
-      this.setState({ error: "Task name should not start with a whitespace" })
+      this.setInputState({
+        error: "Task name should not start with a whitespace",
+      })
       return
     }
     if (name.endsWith(" ")) {
-      this.setState({ error: "Task name should not end with a whitespace" })
+      this.setInputState({
+        error: "Task name should not end with a whitespace",
+      })
       return
     }
 
     this.setState({
-      name: "",
-      description: "",
-      error: null,
+      input: {
+        ...this.state.input,
+        name: "",
+        description: "",
+        error: null,
+      },
       todos: [
         {
           id: Guid.newGuid(),
           name,
           description,
           done: false,
+          severity: this.state.severities.find((s) => s.id == severityId),
           date: new Date(),
         },
         ...this.state.todos,
@@ -65,9 +93,9 @@ export default class App extends React.Component {
     })
   }
 
-  handleSetName = (name) => this.setState({ name })
+  handleSetName = (name) => this.setInputState({ name })
 
-  handleSetDescription = (description) => this.setState({ description })
+  handleSetDescription = (description) => this.setInputState({ description })
 
   handleSetFilterOption = (filterOption) => this.setState({ filterOption })
 
@@ -89,9 +117,14 @@ export default class App extends React.Component {
 
   getFilteredTodos = () => {
     const { todos, filterOption, filterOptions } = this.state
-    const filterFunc = filterOptions[filterOption].filter
+    const filterFunc = filterOptions.find((f) => f.id === filterOption).filter
     return todos.filter(filterFunc)
   }
+
+  handleInputSeverityChange = (severityId) =>
+    this.setInputState({
+      severityId,
+    })
 
   handleTodoGenerate = () => {
     const array = Array.from({ length: 100 }, (_, i) => i).map((i) => ({
@@ -100,6 +133,7 @@ export default class App extends React.Component {
       description: `${i} description`,
       done: false,
       date: new Date(),
+      severity: this.state.severities[0],
     }))
 
     this.setState({
@@ -133,13 +167,17 @@ export default class App extends React.Component {
 
         <div className="fill-row">
           <TodoInput
-            name={this.state.name}
-            description={this.state.description}
+            name={this.state.input.name}
+            description={this.state.input.description}
             onAdd={this.handleAdd}
-            error={this.state.error}
+            error={this.state.input.error}
             onNameChange={this.handleSetName}
             onDescriptionChange={this.handleSetDescription}
+            onSeverityChange={this.handleInputSeverityChange}
+            severityList={this.state.severities}
+            selectedSeverity={this.state.input.severityId}
           />
+          <Spacer size="0.25rem" />
           <Button name="Generate" onClick={this.handleTodoGenerate} />
         </div>
       </div>

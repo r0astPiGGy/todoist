@@ -3,7 +3,7 @@
   border-radius: 0.75rem;
   box-shadow: 0rem 0rem 0rem 0.0625rem #49454f;
   display: grid;
-  grid-template-columns: 1fr 25%;
+  grid-template-columns: 1fr 30%;
 }
 
 .todo .content {
@@ -28,6 +28,19 @@
   color: #b3b3b3;
   grid-column: 2;
   grid-row: 2;
+}
+
+.todo .severity {
+  margin-top: .5rem;
+  grid-column: 2;
+  grid-row: 3;
+  font-weight: 600;
+  font-size: .75rem;
+  padding: .125rem .5rem;
+  background-color: #e6e6e6;
+  color: #49454f;
+  width: fit-content;
+  border-radius: 20rem;
 }
 
 .todo .delete {
