@@ -4,6 +4,7 @@ import commonStyles from "./common.module.css"
 import TodoInput from "./components/TodoInput.jsx"
 import TodoList from "./components/TodoList.jsx"
 import ChipGroup from "./components/ui/ChipGroup.jsx"
+import MultipleChipGroup from "./components/ui/MultipleChipGroup.jsx"
 import TextField from "./components/ui/TextField.jsx"
 import Button from "./components/ui/Button.jsx"
 import Spacer from "./components/ui/Spacer.jsx"
@@ -24,6 +25,8 @@ export default class App extends React.Component {
         error: null,
         severityId: "mid",
       },
+      query: "",
+      severityFilters: [],
       todos: [
         {
           id: Guid.newGuid(),
@@ -99,6 +102,8 @@ export default class App extends React.Component {
 
   handleSetFilterOption = (filterOption) => this.setState({ filterOption })
 
+  handleSetQuery = (query) => this.setState({ query })
+
   handleSetTodoDone = (todo, done) => {
     const index = this.state.todos.indexOf(todo)
     const newTodo = { ...this.state.todos[index], done }
@@ -116,9 +121,30 @@ export default class App extends React.Component {
     })
 
   getFilteredTodos = () => {
-    const { todos, filterOption, filterOptions } = this.state
+    const { todos, filterOption, filterOptions, severityFilters, query } =
+      this.state
+
     const filterFunc = filterOptions.find((f) => f.id === filterOption).filter
-    return todos.filter(filterFunc)
+
+    const filterBySeverity =
+      severityFilters.length == 0
+        ? () => true
+        : (todo) => severityFilters.includes(todo.severity.id)
+
+    const queryLower = query.toLowerCase()
+    const filterByQuery = query
+      ? (todo) =>
+          todo.name.toLowerCase().includes(queryLower) ||
+          todo.description.toLowerCase().includes(queryLower)
+      : () => true
+
+    const composedFilter = this.composeFilters([
+      filterFunc,
+      filterBySeverity,
+      filterByQuery,
+    ])
+
+    return todos.filter(composedFilter)
   }
 
   handleInputSeverityChange = (severityId) =>
@@ -127,7 +153,7 @@ export default class App extends React.Component {
     })
 
   handleTodoGenerate = () => {
-    const array = Array.from({ length: 100 }, (_, i) => i).map((i) => ({
+    const array = Array.from({ length: 1000 }, (_, i) => i).map((i) => ({
       id: Guid.newGuid(),
       name: `${i} todo`,
       description: `${i} description`,
@@ -137,15 +163,41 @@ export default class App extends React.Component {
     }))
 
     this.setState({
-      todos: array,
+      todos: [...this.state.todos, ...array],
     })
   }
+
+  handleSeveritySelect = (severityId) => {
+    this.setState({
+      severityFilters: [...this.state.severityFilters, severityId],
+    })
+  }
+
+  handleSeverityDeselect = (severityId) => {
+    this.setState({
+      severityFilters: this.state.severityFilters.filter(
+        (f) => f !== severityId
+      ),
+    })
+  }
+
+  composeFilters = (filters) => (todo) =>
+    filters.reduce((acc, f) => acc && f(todo), true)
+
+  getSeverities = () =>
+    [...new Set(this.state.todos.map((t) => t.severity.id))]
+      .sort((a, b) => a.localeCompare(b))
+      .map((id) => this.state.severities.find((s) => s.id === id))
 
   render() {
     return (
       <div className={commonStyles.grid}>
         <h1>TODOIST</h1>
-        <TextField placeholder="Search" />
+        <TextField
+          placeholder="Search"
+          value={this.state.query}
+          onValueChange={this.handleSetQuery}
+        />
 
         <div>
           <p className="title">Filter</p>
@@ -153,6 +205,14 @@ export default class App extends React.Component {
             onChipChange={this.handleSetFilterOption}
             selectedChipId={this.state.filterOption}
             chips={this.state.filterOptions}
+          />
+          <Spacer size=".5rem" />
+          <p className="title">Severity</p>
+          <MultipleChipGroup
+            chips={this.getSeverities()}
+            selectedChipIds={this.state.severityFilters}
+            onChipSelect={this.handleSeveritySelect}
+            onChipDeselect={this.handleSeverityDeselect}
           />
         </div>
         <div className="scrollable">
