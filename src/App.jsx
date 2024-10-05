@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import TodoInput from "./components/TodoInput.jsx";
 import TodoList from "./components/TodoList.jsx";
-import FilterOptionList from "./components/FilterOptionList.jsx";
+import ChipGroup from "./components/ChipGroup.jsx";
 import { Guid } from "js-guid";
 
 export default class App extends React.Component {
@@ -86,7 +86,7 @@ export default class App extends React.Component {
   render() {
     return (
       <>
-        <h1>TODO LIST</h1>
+        <h1>TODOIST</h1>
 
         <TodoInput
           name={this.state.name}
@@ -96,10 +96,10 @@ export default class App extends React.Component {
           onNameChange={this.handleSetName}
           onDescriptionChange={this.handleSetDescription}
         />
-        <FilterOptionList
-          onFilterOptionChange={this.handleSetFilterOption}
-          filterOption={this.state.filterOption}
-          filterOptions={this.state.filterOptions}
+        <ChipGroup
+          onChipChange={this.handleSetFilterOption}
+          selectedChipId={this.state.filterOption}
+          chips={this.state.filterOptions}
         />
         <TodoList
           todos={this.getFilteredTodos()}
