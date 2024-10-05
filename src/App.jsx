@@ -1,8 +1,11 @@
 import React from "react"
 import "./App.css"
+import commonStyles from "./common.module.css"
 import TodoInput from "./components/TodoInput.jsx"
 import TodoList from "./components/TodoList.jsx"
-import ChipGroup from "./components/ChipGroup.jsx"
+import ChipGroup from "./components/ui/ChipGroup.jsx"
+import TextField from "./components/ui/TextField.jsx"
+import Button from "./components/ui/Button.jsx"
 import { Guid } from "js-guid"
 
 export default class App extends React.Component {
@@ -106,16 +109,18 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <div className="grid">
+      <div className={commonStyles.grid}>
         <h1>TODOIST</h1>
-        <input type="text" placeholder="Search" />
+        <TextField placeholder="Search" />
 
-        <ChipGroup
-          onChipChange={this.handleSetFilterOption}
-          selectedChipId={this.state.filterOption}
-          chips={this.state.filterOptions}
-        />
-
+        <div>
+          <p className="title">Filter</p>
+          <ChipGroup
+            onChipChange={this.handleSetFilterOption}
+            selectedChipId={this.state.filterOption}
+            chips={this.state.filterOptions}
+          />
+        </div>
         <div className="scrollable">
           <TodoList
             todos={this.getFilteredTodos()}
@@ -135,7 +140,7 @@ export default class App extends React.Component {
             onNameChange={this.handleSetName}
             onDescriptionChange={this.handleSetDescription}
           />
-          <button onClick={this.handleTodoGenerate}>Generate</button>
+          <Button name="Generate" onClick={this.handleTodoGenerate} />
         </div>
       </div>
     )

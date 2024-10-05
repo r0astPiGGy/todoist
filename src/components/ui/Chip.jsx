@@ -1,7 +1,7 @@
 import React from "react"
-import "./Chip.css"
+import styles from "./Chip.module.css"
 
-export default class Chip extends React.Component {
+export default class Chip extends React.PureComponent {
   handleClick = () => this.props.onClick(this.props.id)
 
   render() {
@@ -9,7 +9,7 @@ export default class Chip extends React.Component {
 
     return (
       <div
-        className={selected ? "chip selected" : "chip"}
+        className={selected ? `${styles.chip} ${styles.selected}` : styles.chip}
         onClick={this.handleClick}
       >
         {name}

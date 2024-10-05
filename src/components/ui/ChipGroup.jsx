@@ -1,15 +1,13 @@
 import React from "react"
 import Chip from "./Chip.jsx"
-import "./ChipGroup.css"
+import styles from "./ChipGroup.module.css"
 
 export default class ChipGroup extends React.Component {
   render() {
     const { chips, onChipChange, selectedChipId } = this.props
     return (
-      <div className="chip-group">
-        <p>Filter</p>
-        <div>
-          {Object.entries(chips).map(([chipId, obj]) => (
+      <div className={styles["chip-group"]}>
+        {Object.entries(chips).map(([chipId, obj]) => (
             <Chip
               id={chipId}
               key={chipId}
@@ -18,7 +16,6 @@ export default class ChipGroup extends React.Component {
               onClick={onChipChange}
             />
           ))}
-        </div>
       </div>
     )
   }

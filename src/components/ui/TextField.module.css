@@ -1,0 +1,24 @@
+.text-field {
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  color: rgb(232, 232, 232);
+  border: none;
+  border-radius: 0.25rem;
+  box-shadow: 0rem 0rem 0rem .0625rem #444444;
+  background-color: rgba(34, 34, 34, 0);
+}
+
+.text-field:focus {
+  box-shadow: 0rem 0rem 0rem .0625rem #707070;
+}
+
+.text-field ::placeholder {
+  color: rgb(150, 150, 150);
+}
+
+textarea.text-field {
+  resize: none;
+  height: 6.5rem;
+}
