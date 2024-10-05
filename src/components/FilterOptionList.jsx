@@ -11,6 +11,7 @@ export default class FilterOptionList extends React.Component {
         <div>
           {Object.entries(filterOptions).map(([key, obj]) => (
             <FilterOption
+              key={key}
               selected={key === filterOption}
               name={obj.name}
               onClick={() => onFilterOptionChange(key)}

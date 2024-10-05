@@ -3,6 +3,7 @@ import "./App.css";
 import TodoInput from "./components/TodoInput.jsx";
 import TodoList from "./components/TodoList.jsx";
 import FilterOptionList from "./components/FilterOptionList.jsx";
+import { Guid } from "js-guid";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -12,6 +13,7 @@ export default class App extends React.Component {
       description: "",
       todos: [
         {
+          id: Guid.newGuid(),
           name: "Take a walk with the dog",
           description: "While walking with the dog, I should definitely buy coffee and enjoy the beautiful weather",
           date: new Date(),
@@ -29,7 +31,7 @@ export default class App extends React.Component {
   }
 
   handleAdd = (name, description) => {
-    if (!name || name == "") {
+    if (!name) {
       this.setState({ error: "Task name cannot be empty" });
       return;
     }
@@ -47,7 +49,7 @@ export default class App extends React.Component {
       description: "",
       error: null,
       todos: [
-        { name, description, done: false, date: new Date() },
+        { id: Guid.newGuid(), name, description, done: false, date: new Date() },
         ...this.state.todos,
       ],
     });

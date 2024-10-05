@@ -11,6 +11,7 @@ export default class TodoList extends React.Component {
         {todos.length > 0 || <p className="empty">Empty</p>}
         {todos.map((todo) => (
           <Todo
+            key={todo.id}
             name={todo.name}
             description={todo.description}
             date={todo.date}
