@@ -2,7 +2,7 @@ import React from "react"
 import "./App.css"
 import commonStyles from "./common.module.css"
 import TodoInput from "./components/TodoInput.jsx"
-import TodoList from "./components/TodoList.jsx"
+import FilteredTodoList from "./components/FilteredTodoList.jsx"
 import ChipGroup from "./components/ui/ChipGroup.jsx"
 import MultipleChipGroup from "./components/ui/MultipleChipGroup.jsx"
 import TextField from "./components/ui/TextField.jsx"
@@ -120,33 +120,6 @@ export default class App extends React.Component {
       todos: this.state.todos.filter((t) => t !== todo),
     })
 
-  getFilteredTodos = () => {
-    const { todos, filterOption, filterOptions, severityFilters, query } =
-      this.state
-
-    const filterFunc = filterOptions.find((f) => f.id === filterOption).filter
-
-    const filterBySeverity =
-      severityFilters.length == 0
-        ? () => true
-        : (todo) => severityFilters.includes(todo.severity.id)
-
-    const queryLower = query.toLowerCase()
-    const filterByQuery = query
-      ? (todo) =>
-          todo.name.toLowerCase().includes(queryLower) ||
-          todo.description.toLowerCase().includes(queryLower)
-      : () => true
-
-    const composedFilter = this.composeFilters([
-      filterFunc,
-      filterBySeverity,
-      filterByQuery,
-    ])
-
-    return todos.filter(composedFilter)
-  }
-
   handleInputSeverityChange = (severityId) =>
     this.setInputState({
       severityId,
@@ -180,10 +153,6 @@ export default class App extends React.Component {
       ),
     })
   }
-
-  composeFilters = (filters) => (todo) =>
-    filters.reduce((acc, f) => acc && f(todo), true)
-
   getSeverities = () =>
     [...new Set(this.state.todos.map((t) => t.severity.id))]
       .sort((a, b) => a.localeCompare(b))
@@ -216,8 +185,15 @@ export default class App extends React.Component {
           />
         </div>
         <div className="scrollable">
-          <TodoList
-            todos={this.getFilteredTodos()}
+          <FilteredTodoList
+            todos={this.state.todos}
+            severities={this.state.severityFilters}
+            query={this.state.query}
+            filterByTypeFunc={
+              this.state.filterOptions.find(
+                (f) => f.id === this.state.filterOption
+              ).filter
+            }
             onTodoDoneChange={this.handleSetTodoDone}
             onTodoDelete={this.handleTodoDelete}
           />
