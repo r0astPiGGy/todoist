@@ -4,27 +4,28 @@ import commonStyles from "./common.module.css"
 import TodoInput from "./components/TodoInput.jsx"
 import FilteredTodoList from "./components/FilteredTodoList.jsx"
 import ChipGroup from "./components/ui/ChipGroup.jsx"
-import MultipleChipGroup from "./components/ui/MultipleChipGroup.jsx"
+import SeverityFilter from "./components/SeverityFilter.jsx"
 import TextField from "./components/ui/TextField.jsx"
 import Button from "./components/ui/Button.jsx"
 import Spacer from "./components/ui/Spacer.jsx"
 import { Guid } from "js-guid"
 
+const allSeverities = [
+  { id: "urgent", name: "Urgent" },
+  { id: "mid", name: "Mid" },
+  { id: "notUrgent", name: "Not urgent" },
+]
+
+const filterOptions = [
+  { id: "all", name: "All", filter: () => true },
+  { id: "notDone", name: "Active", filter: (todo) => !todo.done },
+  { id: "done", name: "Done", filter: (todo) => todo.done },
+]
+
 export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      severities: [
-        { id: "urgent", name: "Urgent" },
-        { id: "mid", name: "Mid" },
-        { id: "notUrgent", name: "Not urgent" },
-      ],
-      input: {
-        name: "",
-        description: "",
-        error: null,
-        severityId: "mid",
-      },
       query: "",
       severityFilters: [],
       todos: [
@@ -39,66 +40,24 @@ export default class App extends React.Component {
         },
       ],
       filterOption: "all",
-      filterOptions: [
-        { id: "all", name: "All", filter: () => true },
-        { id: "notDone", name: "Active", filter: (todo) => !todo.done },
-        { id: "done", name: "Done", filter: (todo) => todo.done },
-      ],
     }
-  }
-
-  setInputState = (state) => {
-    const obj = {
-      ...this.state.input,
-    }
-
-    Object.entries(state).forEach(([k, v]) => (obj[k] = v))
-
-    this.setState({ input: obj })
   }
 
   handleAdd = (name, description, severityId) => {
-    if (!name) {
-      this.setInputState({ error: "Task name cannot be empty" })
-      return
-    }
-    if (name.startsWith(" ")) {
-      this.setInputState({
-        error: "Task name should not start with a whitespace",
-      })
-      return
-    }
-    if (name.endsWith(" ")) {
-      this.setInputState({
-        error: "Task name should not end with a whitespace",
-      })
-      return
-    }
-
     this.setState({
-      input: {
-        ...this.state.input,
-        name: "",
-        description: "",
-        error: null,
-      },
       todos: [
         {
           id: Guid.newGuid(),
           name,
           description,
           done: false,
-          severity: this.state.severities.find((s) => s.id == severityId),
+          severity: allSeverities.find((s) => s.id == severityId),
           date: new Date(),
         },
         ...this.state.todos,
       ],
     })
   }
-
-  handleSetName = (name) => this.setInputState({ name })
-
-  handleSetDescription = (description) => this.setInputState({ description })
 
   handleSetFilterOption = (filterOption) => this.setState({ filterOption })
 
@@ -120,11 +79,6 @@ export default class App extends React.Component {
       todos: this.state.todos.filter((t) => t !== todo),
     })
 
-  handleInputSeverityChange = (severityId) =>
-    this.setInputState({
-      severityId,
-    })
-
   handleTodoGenerate = () => {
     const array = Array.from({ length: 1000 }, (_, i) => i).map((i) => ({
       id: Guid.newGuid(),
@@ -132,7 +86,7 @@ export default class App extends React.Component {
       description: `${i} description`,
       done: false,
       date: new Date(),
-      severity: this.state.severities[0],
+      severity: allSeverities[0],
     }))
 
     this.setState({
@@ -153,10 +107,16 @@ export default class App extends React.Component {
       ),
     })
   }
+
+  getSelectedSeverities = () =>
+    this.state.severityFilters.filter((s) => {
+      return allSeverities.findIndex((av) => av.id === s) !== -1
+    })
+
   getSeverities = () =>
     [...new Set(this.state.todos.map((t) => t.severity.id))]
       .sort((a, b) => a.localeCompare(b))
-      .map((id) => this.state.severities.find((s) => s.id === id))
+      .map((id) => this.state.severityFilters.find((s) => s.id === id))
 
   render() {
     return (
@@ -173,13 +133,13 @@ export default class App extends React.Component {
           <ChipGroup
             onChipChange={this.handleSetFilterOption}
             selectedChipId={this.state.filterOption}
-            chips={this.state.filterOptions}
+            chips={filterOptions}
           />
           <Spacer size=".5rem" />
-          <p className="title">Severity</p>
-          <MultipleChipGroup
-            chips={this.getSeverities()}
-            selectedChipIds={this.state.severityFilters}
+          <SeverityFilter
+            todos={this.state.todos}
+            severities={allSeverities}
+            severityFilters={this.state.severityFilters}
             onChipSelect={this.handleSeveritySelect}
             onChipDeselect={this.handleSeverityDeselect}
           />
@@ -190,9 +150,7 @@ export default class App extends React.Component {
             severities={this.state.severityFilters}
             query={this.state.query}
             filterByTypeFunc={
-              this.state.filterOptions.find(
-                (f) => f.id === this.state.filterOption
-              ).filter
+              filterOptions.find((f) => f.id === this.state.filterOption).filter
             }
             onTodoDoneChange={this.handleSetTodoDone}
             onTodoDelete={this.handleTodoDelete}
@@ -202,17 +160,7 @@ export default class App extends React.Component {
         <h2 className="fill-row">Add task</h2>
 
         <div className="fill-row">
-          <TodoInput
-            name={this.state.input.name}
-            description={this.state.input.description}
-            onAdd={this.handleAdd}
-            error={this.state.input.error}
-            onNameChange={this.handleSetName}
-            onDescriptionChange={this.handleSetDescription}
-            onSeverityChange={this.handleInputSeverityChange}
-            severityList={this.state.severities}
-            selectedSeverity={this.state.input.severityId}
-          />
+          <TodoInput onAdd={this.handleAdd} severityList={allSeverities} />
           <Spacer size="0.25rem" />
           <Button name="Generate" onClick={this.handleTodoGenerate} />
         </div>

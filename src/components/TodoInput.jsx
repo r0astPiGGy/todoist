@@ -7,23 +7,54 @@ import ChipGroup from "./ui/ChipGroup.jsx"
 import Spacer from "./ui/Spacer.jsx"
 
 export default class TodoInput extends React.Component {
-  handleAdd = () =>
-    this.props.onAdd(
-      this.props.name,
-      this.props.description,
-      this.props.selectedSeverity
-    )
+  constructor(props) {
+    super(props)
 
-  handleNameChange = (name) => this.props.onNameChange(name)
+    this.state = {
+      name: "",
+      description: "",
+      severityId: props.severityList[0].id,
+      error: "",
+    }
+  }
 
-  handleDescriptionChange = (description) =>
-    this.props.onDescriptionChange(description)
+  handleAdd = () => {
+    const { name, description, severityId } = this.state
 
-  handleSeverityChange = (severityId) => this.props.onSeverityChange(severityId)
+    if (!name) {
+      this.setState({ error: "Task name cannot be empty" })
+      return
+    }
+    if (name.startsWith(" ")) {
+      this.setState({
+        error: "Task name should not start with a whitespace",
+      })
+      return
+    }
+    if (name.endsWith(" ")) {
+      this.setState({
+        error: "Task name should not end with a whitespace",
+      })
+      return
+    }
+
+    this.props.onAdd(name, description, severityId)
+    this.setState({
+      name: "",
+      description: "",
+      error: null,
+    })
+  }
+
+  handleNameChange = (name) => this.setState({ name })
+
+  handleDescriptionChange = (description) => this.setState({ description })
+
+  handleSeverityChange = (severityId) => this.setState({ severityId })
 
   render() {
-    const { name, description, error, selectedSeverity, severityList } =
-      this.props
+    const { severityList } = this.props
+    const { error, name, description, severityId } = this.state
 
     return (
       <div
@@ -38,12 +69,14 @@ export default class TodoInput extends React.Component {
           <div></div>
 
           <p style={{ color: "red" }}>{error || <br />}</p>
+
           <p>Task name</p>
           <TextField
             onValueChange={this.handleNameChange}
             value={name}
             placeholder="Task name"
           />
+
           <p>Task description</p>
           <TextField
             onValueChange={this.handleDescriptionChange}
@@ -51,15 +84,15 @@ export default class TodoInput extends React.Component {
             placeholder="Task description"
             multiline
           />
+
           <p>Task severity</p>
           <ChipGroup
             chips={severityList}
             onChipChange={this.handleSeverityChange}
-            selectedChipId={selectedSeverity}
+            selectedChipId={severityId}
           />
 
           <div></div>
-
           <Button name="Add" onClick={this.handleAdd} />
         </div>
       </div>
