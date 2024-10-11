@@ -1,5 +1,8 @@
 import { Guid } from "js-guid"
 import { allSeverities } from "./App"
+import { Chance } from "chance"
+
+const chance = new Chance()
 
 export const mapIdToSeverity = (id) => allSeverities.find((s) => s.id === id)
 
@@ -12,13 +15,19 @@ export const filterAbsentSeverities = (
   severitiesToFilter
 ) => severitiesToFilter.filter((s) => availableSeverities.includes(s))
 
+const sentenceOf = ({ minWords, maxWords }) =>
+chance.sentence({ words: chance.integer({ min: minWords, max: maxWords }) })
+
+const randomIn = (array) =>
+  array[chance.integer({ min: 0, max: array.length - 1 })]
+
 const createRandomTodo = (_, i) => ({
   id: Guid.newGuid(),
-  name: `${i} todo`,
-  description: `${i} description`,
-  done: false,
+  name: sentenceOf({ minWords: 3, maxWords: 7 }),
+  description: sentenceOf({ minWords: 10, maxWords: 15 }),
+  done: chance.bool(),
   date: new Date(),
-  severity: allSeverities[0],
+  severity: randomIn(allSeverities),
 })
 
 export const generateTodos = (amount = 1000) =>
