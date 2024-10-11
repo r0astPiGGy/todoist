@@ -14,13 +14,14 @@ export default class TodoList extends React.PureComponent {
         {todos.map((todo) => (
           <Todo
             key={todo.id}
+            id={todo.id}
             name={todo.name}
             severity={todo.severity.name}
             description={todo.description}
             date={todo.date}
             done={todo.done}
-            onDelete={() => onTodoDelete(todo)}
-            onDoneChange={(done) => onTodoDoneChange(todo, done)}
+            onDelete={onTodoDelete}
+            onDoneChange={onTodoDoneChange}
           />
         ))}
       </div>

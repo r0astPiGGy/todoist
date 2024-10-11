@@ -110,25 +110,27 @@ export default class App extends React.Component {
 
   handleSetQuery = (query) => this.setState({ query })
 
-  handleSetTodoDone = (todo, done) => {
-    const index = this.state.todos.indexOf(todo)
-    const newTodo = { ...this.state.todos[index], done }
+  handleSetTodoDone = (id, done) => {
+    const oldTodo = this.state.todos.find((todo) => todo.id === id)
+    const newTodo = { ...oldTodo, done }
 
     this.setState({
       todos: this.state.todos
-        .map((todo, i) => (i === index ? newTodo : todo))
+        .map((todo) => (todo.id === id ? newTodo : todo))
         .sort((a, b) => a.done - b.done),
     })
   }
 
-  handleTodoDelete = (todo) =>
+  handleTodoDelete = (id) =>
     this.setState({
-      todos: this.state.todos.filter((t) => t !== todo),
+      todos: this.state.todos.filter((todo) => todo.id !== id),
     })
 
   handleTodoGenerate = () =>
     this.setState({
-      todos: [...this.state.todos, ...generateTodos()].sort((a, b) => a.done - b.done),
+      todos: [...this.state.todos, ...generateTodos()].sort(
+        (a, b) => a.done - b.done
+      ),
     })
 
   handleSeveritySelect = (severityId) => {
