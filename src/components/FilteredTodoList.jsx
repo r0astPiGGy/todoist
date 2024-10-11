@@ -1,11 +1,16 @@
 import React from "react"
 import TodoList from "./TodoList.jsx"
+import { filterAbsentSeverities, getSeveritiesFromTodos } from "../utils.js"
 
 export default class FilteredTodoList extends React.PureComponent {
-
   getFilteredTodos = () => {
-    const { todos, filterByTypeFunc, severities, query } =
-      this.props
+    const { todos, filterByTypeFunc, selectedSeverityIds, query } = this.props
+
+    const availableSeverities = getSeveritiesFromTodos(todos)
+    const severities = filterAbsentSeverities(
+      availableSeverities,
+      selectedSeverityIds
+    )
 
     const filterBySeverity =
       severities.length == 0

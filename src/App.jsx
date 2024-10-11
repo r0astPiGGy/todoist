@@ -9,8 +9,9 @@ import TextField from "./components/ui/TextField.jsx"
 import Button from "./components/ui/Button.jsx"
 import Spacer from "./components/ui/Spacer.jsx"
 import { Guid } from "js-guid"
+import { generateTodos } from "./utils.js"
 
-const allSeverities = [
+export const allSeverities = [
   { id: "urgent", name: "Urgent" },
   { id: "mid", name: "Mid" },
   { id: "notUrgent", name: "Not urgent" },
@@ -27,7 +28,6 @@ export default class App extends React.Component {
     super(props)
     this.state = {
       query: "",
-      severityFilters: [],
       todos: [
         {
           id: Guid.newGuid(),
@@ -36,14 +36,62 @@ export default class App extends React.Component {
             "While walking with the dog, I should definitely buy coffee and enjoy the beautiful weather",
           date: new Date(),
           done: false,
-          severity: { id: "mid", name: "Mid" },
+          severity: allSeverities[0],
         },
       ],
-      filterOption: "all",
+      severityFilterIds: [],
+      filterByType: "all",
     }
   }
 
-  handleAdd = (name, description, severityId) => {
+  render() {
+    return (
+      <div className={commonStyles.grid}>
+        <h1>TODOIST</h1>
+        <TextField
+          placeholder="Search"
+          value={this.state.query}
+          onValueChange={this.handleSetQuery}
+        />
+
+        <div>
+          <p className="title">Filter</p>
+          <ChipGroup
+            onChipChange={this.handleSetFilterByType}
+            selectedChipId={this.state.filterByType}
+            chips={filterOptions}
+          />
+          <Spacer size=".5rem" />
+          <SeverityFilter
+            todos={this.state.todos}
+            selectedSeverityIds={this.state.severityFilterIds}
+            onSeveritySelect={this.handleSeveritySelect}
+            onSeverityDeselect={this.handleSeverityDeselect}
+          />
+        </div>
+        <div className="scrollable">
+          <FilteredTodoList
+            todos={this.state.todos}
+            selectedSeverityIds={this.state.severityFilterIds}
+            query={this.state.query}
+            filterByTypeFunc={this.getFilterByTypeFunc()}
+            onTodoDoneChange={this.handleSetTodoDone}
+            onTodoDelete={this.handleTodoDelete}
+          />
+        </div>
+
+        <h2 className="fill-row">Add task</h2>
+
+        <div className="fill-row">
+          <TodoInput onAdd={this.handleAdd} severityList={allSeverities} />
+          <Spacer size="0.25rem" />
+          <Button name="Generate" onClick={this.handleTodoGenerate} />
+        </div>
+      </div>
+    )
+  }
+
+  handleAdd = (name, description, severityId) =>
     this.setState({
       todos: [
         {
@@ -57,9 +105,8 @@ export default class App extends React.Component {
         ...this.state.todos,
       ],
     })
-  }
 
-  handleSetFilterOption = (filterOption) => this.setState({ filterOption })
+  handleSetFilterByType = (filterByType) => this.setState({ filterByType })
 
   handleSetQuery = (query) => this.setState({ query })
 
@@ -79,92 +126,25 @@ export default class App extends React.Component {
       todos: this.state.todos.filter((t) => t !== todo),
     })
 
-  handleTodoGenerate = () => {
-    const array = Array.from({ length: 1000 }, (_, i) => i).map((i) => ({
-      id: Guid.newGuid(),
-      name: `${i} todo`,
-      description: `${i} description`,
-      done: false,
-      date: new Date(),
-      severity: allSeverities[0],
-    }))
-
+  handleTodoGenerate = () => 
     this.setState({
-      todos: [...this.state.todos, ...array],
+      todos: [...this.state.todos, ...generateTodos()],
     })
-  }
 
   handleSeveritySelect = (severityId) => {
     this.setState({
-      severityFilters: [...this.state.severityFilters, severityId],
+      severityFilterIds: [...this.state.severityFilterIds, severityId],
     })
   }
 
   handleSeverityDeselect = (severityId) => {
     this.setState({
-      severityFilters: this.state.severityFilters.filter(
+      severityFilterIds: this.state.severityFilterIds.filter(
         (f) => f !== severityId
       ),
     })
   }
 
-  getSelectedSeverities = () =>
-    this.state.severityFilters.filter((s) => {
-      return allSeverities.findIndex((av) => av.id === s) !== -1
-    })
-
-  getSeverities = () =>
-    [...new Set(this.state.todos.map((t) => t.severity.id))]
-      .sort((a, b) => a.localeCompare(b))
-      .map((id) => this.state.severityFilters.find((s) => s.id === id))
-
-  render() {
-    return (
-      <div className={commonStyles.grid}>
-        <h1>TODOIST</h1>
-        <TextField
-          placeholder="Search"
-          value={this.state.query}
-          onValueChange={this.handleSetQuery}
-        />
-
-        <div>
-          <p className="title">Filter</p>
-          <ChipGroup
-            onChipChange={this.handleSetFilterOption}
-            selectedChipId={this.state.filterOption}
-            chips={filterOptions}
-          />
-          <Spacer size=".5rem" />
-          <SeverityFilter
-            todos={this.state.todos}
-            severities={allSeverities}
-            severityFilters={this.state.severityFilters}
-            onChipSelect={this.handleSeveritySelect}
-            onChipDeselect={this.handleSeverityDeselect}
-          />
-        </div>
-        <div className="scrollable">
-          <FilteredTodoList
-            todos={this.state.todos}
-            severities={this.state.severityFilters}
-            query={this.state.query}
-            filterByTypeFunc={
-              filterOptions.find((f) => f.id === this.state.filterOption).filter
-            }
-            onTodoDoneChange={this.handleSetTodoDone}
-            onTodoDelete={this.handleTodoDelete}
-          />
-        </div>
-
-        <h2 className="fill-row">Add task</h2>
-
-        <div className="fill-row">
-          <TodoInput onAdd={this.handleAdd} severityList={allSeverities} />
-          <Spacer size="0.25rem" />
-          <Button name="Generate" onClick={this.handleTodoGenerate} />
-        </div>
-      </div>
-    )
-  }
+  getFilterByTypeFunc = () =>
+    filterOptions.find((f) => f.id === this.state.filterByType).filter
 }

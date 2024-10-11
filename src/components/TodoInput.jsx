@@ -4,7 +4,6 @@ import styles from "./TodoInput.module.css"
 import TextField from "./ui/TextField.jsx"
 import Button from "./ui/Button.jsx"
 import ChipGroup from "./ui/ChipGroup.jsx"
-import Spacer from "./ui/Spacer.jsx"
 
 export default class TodoInput extends React.Component {
   constructor(props) {

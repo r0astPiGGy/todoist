@@ -1,23 +1,29 @@
 import React from "react"
 import MultipleChipGroup from "./ui/MultipleChipGroup.jsx"
+import {
+  getSeveritiesFromTodos,
+  filterAbsentSeverities,
+  mapIdToSeverity,
+} from "../utils.js"
 
 export default class SeverityFilter extends React.PureComponent {
-  getSeverities = () =>
-    [...new Set(this.props.todos.map((t) => t.severity.id))]
-      .sort((a, b) => a.localeCompare(b))
-      .map((id) => this.props.severities.find((s) => s.id === id))
+  getSelectedSeverities = () => getSeveritiesFromTodos(this.props.todos).sort()
 
   render() {
-    const availableSeverities = this.getSeverities()
+    const allSeverities = this.getSelectedSeverities()
+    const selectedSeverities = filterAbsentSeverities(
+      allSeverities,
+      this.props.selectedSeverityIds
+    )
 
     return (
       <>
         <p className="title">Severity</p>
         <MultipleChipGroup
-          chips={availableSeverities}
-          selectedChipIds={this.props.severityFilters}
-          onChipSelect={this.props.onChipSelect}
-          onChipDeselect={this.props.onChipDeselect}
+          chips={allSeverities.map(mapIdToSeverity)}
+          selectedChipIds={selectedSeverities}
+          onChipSelect={this.props.onSeveritySelect}
+          onChipDeselect={this.props.onSeverityDeselect}
         />
       </>
     )
