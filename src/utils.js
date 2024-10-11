@@ -16,7 +16,7 @@ export const filterAbsentSeverities = (
 ) => severitiesToFilter.filter((s) => availableSeverities.includes(s))
 
 const sentenceOf = ({ minWords, maxWords }) =>
-chance.sentence({ words: chance.integer({ min: minWords, max: maxWords }) })
+  chance.sentence({ words: chance.integer({ min: minWords, max: maxWords }) })
 
 const randomIn = (array) =>
   array[chance.integer({ min: 0, max: array.length - 1 })]

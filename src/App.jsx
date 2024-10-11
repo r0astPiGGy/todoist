@@ -10,6 +10,7 @@ import Button from "./components/ui/Button.jsx"
 import Spacer from "./components/ui/Spacer.jsx"
 import { Guid } from "js-guid"
 import { generateTodos } from "./utils.js"
+import { debounce } from "lodash"
 
 export const allSeverities = [
   { id: "urgent", name: "Urgent" },
@@ -28,6 +29,7 @@ export default class App extends React.Component {
     super(props)
     this.state = {
       query: "",
+      debouncedQuery: "",
       todos: [
         {
           id: Guid.newGuid(),
@@ -53,7 +55,6 @@ export default class App extends React.Component {
           value={this.state.query}
           onValueChange={this.handleSetQuery}
         />
-
         <div>
           <p className="title">Filter</p>
           <ChipGroup
@@ -73,7 +74,7 @@ export default class App extends React.Component {
           <FilteredTodoList
             todos={this.state.todos}
             selectedSeverityIds={this.state.severityFilterIds}
-            query={this.state.query}
+            query={this.state.debouncedQuery}
             filterByTypeFunc={this.getFilterByTypeFunc()}
             onTodoDoneChange={this.handleSetTodoDone}
             onTodoDelete={this.handleTodoDelete}
@@ -108,7 +109,15 @@ export default class App extends React.Component {
 
   handleSetFilterByType = (filterByType) => this.setState({ filterByType })
 
-  handleSetQuery = (query) => this.setState({ query })
+  debouncedSetQuery = debounce((debouncedQuery) =>
+    this.setState({ debouncedQuery }),
+    500
+  )
+
+  handleSetQuery = (query) => {
+    this.setState({ query })
+    this.debouncedSetQuery(query)
+  }
 
   handleSetTodoDone = (id, done) => {
     const oldTodo = this.state.todos.find((todo) => todo.id === id)
