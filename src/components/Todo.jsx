@@ -1,12 +1,13 @@
 import React from "react"
-import styles from "./Todo.module.css";
+import styles from "./Todo.module.css"
 
 export default class Todo extends React.PureComponent {
   render() {
-    const { onDoneChange, done, name, description, severity, date, onDelete } = this.props
+    const { onDoneChange, done, name, description, severity, date, onDelete } =
+      this.props
 
     return (
-      <div className={done ? `${styles.todo} ${styles.done}`: styles.todo}>
+      <div className={done ? `${styles.todo} ${styles.done}` : styles.todo}>
         <div className={styles.content}>
           <input
             type="checkbox"

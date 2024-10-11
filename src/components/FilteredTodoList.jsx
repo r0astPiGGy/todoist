@@ -3,6 +3,16 @@ import TodoList from "./TodoList.jsx"
 import { filterAbsentSeverities, getSeveritiesFromTodos } from "../utils.js"
 
 export default class FilteredTodoList extends React.PureComponent {
+  render() {
+    return (
+      <TodoList
+        todos={this.getFilteredTodos()}
+        onTodoDoneChange={this.props.onTodoDoneChange}
+        onTodoDelete={this.props.onTodoDelete}
+      />
+    )
+  }
+
   getFilteredTodos = () => {
     const { todos, filterByTypeFunc, selectedSeverityIds, query } = this.props
 
@@ -35,14 +45,4 @@ export default class FilteredTodoList extends React.PureComponent {
 
   composeFilters = (filters) => (todo) =>
     filters.reduce((acc, f) => acc && f(todo), true)
-
-  render() {
-    return (
-      <TodoList
-        todos={this.getFilteredTodos()}
-        onTodoDoneChange={this.props.onTodoDoneChange}
-        onTodoDelete={this.props.onTodoDelete}
-      />
-    )
-  }
 }

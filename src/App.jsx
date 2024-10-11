@@ -126,7 +126,7 @@ export default class App extends React.Component {
       todos: this.state.todos.filter((t) => t !== todo),
     })
 
-  handleTodoGenerate = () => 
+  handleTodoGenerate = () =>
     this.setState({
       todos: [...this.state.todos, ...generateTodos()],
     })

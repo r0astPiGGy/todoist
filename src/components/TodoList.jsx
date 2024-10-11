@@ -8,7 +8,9 @@ export default class TodoList extends React.PureComponent {
 
     return (
       <div className={styles["todo-list"]}>
-        {todos.length > 0 || <p className={styles.empty}>No todos found for your query.</p>}
+        {todos.length > 0 || (
+          <p className={styles.empty}>No todos found for your query.</p>
+        )}
         {todos.map((todo) => (
           <Todo
             key={todo.id}
