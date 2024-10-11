@@ -6,6 +6,11 @@
   grid-template-columns: 1fr 30%;
 }
 
+.todo input {
+  align-self: start;
+  margin-top: .125rem;
+}
+
 .todo .content {
   display: grid;
   column-gap: 0.5rem;

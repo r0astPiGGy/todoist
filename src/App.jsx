@@ -128,7 +128,7 @@ export default class App extends React.Component {
 
   handleTodoGenerate = () =>
     this.setState({
-      todos: [...this.state.todos, ...generateTodos()],
+      todos: [...this.state.todos, ...generateTodos()].sort((a, b) => a.done - b.done),
     })
 
   handleSeveritySelect = (severityId) => {

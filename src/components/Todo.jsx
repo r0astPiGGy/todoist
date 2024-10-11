@@ -6,6 +6,8 @@ export default class Todo extends React.PureComponent {
     const { onDoneChange, done, name, description, severity, date, onDelete } =
       this.props
 
+    console.log(`Rendering ${name} todo`);
+
     return (
       <div className={done ? `${styles.todo} ${styles.done}` : styles.todo}>
         <div className={styles.content}>

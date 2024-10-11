@@ -30,5 +30,5 @@ const createRandomTodo = (_, i) => ({
   severity: randomIn(allSeverities),
 })
 
-export const generateTodos = (amount = 1000) =>
+export const generateTodos = (amount = 5000) =>
   Array.from({ length: amount }).map(createRandomTodo)
