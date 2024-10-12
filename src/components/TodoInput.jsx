@@ -84,9 +84,9 @@ export default class TodoInput extends React.Component {
     })
   }
 
-  handleNameChange = (name) => this.setState({ name })
+  handleNameChange = (name) => this.setState({ name, error: "" })
 
-  handleDescriptionChange = (description) => this.setState({ description })
+  handleDescriptionChange = (description) => this.setState({ description, error: "" })
 
-  handleSeverityChange = (severityId) => this.setState({ severityId })
+  handleSeverityChange = (severityId) => this.setState({ severityId, error: "" })
 }
