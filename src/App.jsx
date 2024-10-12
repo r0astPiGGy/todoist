@@ -9,7 +9,11 @@ import TextField from "./components/ui/TextField.jsx"
 import Button from "./components/ui/Button.jsx"
 import Spacer from "./components/ui/Spacer.jsx"
 import { Guid } from "js-guid"
-import { generateTodos } from "./utils.js"
+import {
+  filterAbsentSeverities,
+  generateTodos,
+  getSeveritiesFromTodos,
+} from "./utils.js"
 import { debounce } from "lodash"
 
 export const allSeverities = [
@@ -41,6 +45,7 @@ export default class App extends React.Component {
           severity: allSeverities[0],
         },
       ],
+      filters: { type: this.getFilterByType("all") },
       severityFilterIds: [],
       filterByType: "all",
     }
@@ -73,9 +78,7 @@ export default class App extends React.Component {
         <div className="scrollable">
           <FilteredTodoList
             todos={this.state.todos}
-            selectedSeverityIds={this.state.severityFilterIds}
-            query={this.state.debouncedQuery}
-            filterByTypeFunc={this.getFilterByTypeFunc()}
+            filters={this.state.filters}
             onTodoDoneChange={this.handleSetTodoDone}
             onTodoDelete={this.handleTodoDelete}
           />
@@ -92,6 +95,35 @@ export default class App extends React.Component {
     )
   }
 
+  getFilterBySeverity = (severityFilterIds) => {
+    const availableSeverities = getSeveritiesFromTodos(this.state.todos)
+    const severities = filterAbsentSeverities(
+      availableSeverities,
+      severityFilterIds
+    )
+
+    return severities.length == 0
+      ? () => true
+      : (todo) => severities.includes(todo.severity.id)
+  }
+
+  getFilterByQuery = (query) => {
+    const queryLower = query.toLowerCase()
+    return query
+      ? (todo) =>
+          todo.name.toLowerCase().includes(queryLower) ||
+          todo.description.toLowerCase().includes(queryLower)
+      : () => true
+  }
+
+  getFilterByType = (type = this.state.filterByType) =>
+    filterOptions.find((f) => f.id === type).filter
+
+  getUpdatedFilters = (filterName, filter) => ({
+    ...this.state.filters,
+    [filterName]: filter,
+  })
+
   handleAdd = (name, description, severityId) =>
     this.setState({
       todos: [
@@ -107,10 +139,18 @@ export default class App extends React.Component {
       ],
     })
 
-  handleSetFilterByType = (filterByType) => this.setState({ filterByType })
+  handleSetFilterByType = (filterByType) =>
+    this.setState({
+      filterByType,
+      filters: this.getUpdatedFilters("type", this.getFilterByType(filterByType)),
+    })
 
-  debouncedSetQuery = debounce((debouncedQuery) =>
-    this.setState({ debouncedQuery }),
+  debouncedSetQuery = debounce(
+    (debouncedQuery) =>
+      this.setState({
+        debouncedQuery,
+        filters: this.getUpdatedFilters("search", this.getFilterByQuery(debouncedQuery)),
+      }),
     500
   )
 
@@ -143,19 +183,22 @@ export default class App extends React.Component {
     })
 
   handleSeveritySelect = (severityId) => {
+    const severityFilterIds = [...this.state.severityFilterIds, severityId]
+
     this.setState({
-      severityFilterIds: [...this.state.severityFilterIds, severityId],
+      severityFilterIds,
+      filters: this.getUpdatedFilters("severity", this.getFilterBySeverity(severityFilterIds)),
     })
   }
 
   handleSeverityDeselect = (severityId) => {
+    const severityFilterIds = this.state.severityFilterIds.filter(
+      (f) => f !== severityId
+    )
+
     this.setState({
-      severityFilterIds: this.state.severityFilterIds.filter(
-        (f) => f !== severityId
-      ),
+      severityFilterIds,
+      filters: this.getUpdatedFilters("severity", this.getFilterBySeverity(severityFilterIds)),
     })
   }
-
-  getFilterByTypeFunc = () =>
-    filterOptions.find((f) => f.id === this.state.filterByType).filter
 }

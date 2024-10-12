@@ -1,6 +1,5 @@
 import React from "react"
 import TodoList from "./TodoList.jsx"
-import { filterAbsentSeverities, getSeveritiesFromTodos } from "../utils.js"
 
 export default class FilteredTodoList extends React.PureComponent {
   render() {
@@ -14,33 +13,9 @@ export default class FilteredTodoList extends React.PureComponent {
   }
 
   getFilteredTodos = () => {
-    const { todos, filterByTypeFunc, selectedSeverityIds, query } = this.props
+    const { todos, filters } = this.props
 
-    const availableSeverities = getSeveritiesFromTodos(todos)
-    const severities = filterAbsentSeverities(
-      availableSeverities,
-      selectedSeverityIds
-    )
-
-    const filterBySeverity =
-      severities.length == 0
-        ? () => true
-        : (todo) => severities.includes(todo.severity.id)
-
-    const queryLower = query.toLowerCase()
-    const filterByQuery = query
-      ? (todo) =>
-          todo.name.toLowerCase().includes(queryLower) ||
-          todo.description.toLowerCase().includes(queryLower)
-      : () => true
-
-    const composedFilter = this.composeFilters([
-      filterByTypeFunc,
-      filterBySeverity,
-      filterByQuery,
-    ])
-
-    return todos.filter(composedFilter)
+    return todos.filter(this.composeFilters(Object.values(filters)))
   }
 
   composeFilters = (filters) => (todo) =>
